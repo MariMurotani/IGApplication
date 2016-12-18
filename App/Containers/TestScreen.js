@@ -18,7 +18,9 @@ const fontStyles = R.keys(Fonts.style)
 export default class TestScreen extends React.Component {
   render () {
     return (
-      <Text>Hello world!</Text>
+      <View style={styles.mainContainer}>
+        <Text>Hello world!</Text>
+      </View>
     )
   }
 }
