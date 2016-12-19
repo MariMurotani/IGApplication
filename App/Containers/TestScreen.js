@@ -29,7 +29,12 @@ export default class TestScreen extends React.Component {
   constructor(props) {
     super(props);
     //  ステートの設定
-    this.state = {feeds: false};
+    this.state = {
+      dataSource: new ListView.DataSource({
+        rowHasChanged: (row1, row2) => row1 !== row2,
+      }),
+      loaded: false
+    };
     //  データ取得
     this.fetchData();
   }
@@ -38,17 +43,19 @@ export default class TestScreen extends React.Component {
     fetch(REQUEST_URL)
       .then((response) => response.json())
       .then((responseData) => {
-        console.log(responseData);
+        console.log(responseData.responseData);
+        //  ステートに値を設定
         this.setState({
-          //  ステートに値を設定
-          feeds: responseData.feed,
+          dataSource: this.state.dataSource.cloneWithRows(responseData.responseData.feed),
+          loaded: true,
         });
+        this.render();
       })
       .done();
   }
   //  描画用のrender
   render () {
-    if (!this.state.feed) {
+    if (!this.state.loaded) {
       return this.renderLoadingView();
     }
     return (
@@ -56,7 +63,7 @@ export default class TestScreen extends React.Component {
       <Text>Hello world!</Text>
       </View>
     );
-    var feeds = this.state.feed;
+    var feeds = this.state.dataSource;
     console.log(feeds);
     return this.renderListView(feeds);
   }
